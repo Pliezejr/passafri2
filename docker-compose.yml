@@ -1,0 +1,36 @@
+# Usage:
+#   1. cp .env.example .env   (fill in ADMIN_EMAIL / ADMIN_PASSWORD at minimum)
+#   2. docker compose up -d --build
+#   3. Put a reverse proxy (nginx, Caddy, Traefik) in front for TLS — see README.
+#
+# The app itself binds plain HTTP on port 3000; this file does not attempt
+# to run a TLS terminator, since that setup varies a lot by host. If your
+# proxy sits in front and terminates HTTPS, set TRUST_PROXY=1 below so
+# session cookies get the Secure flag and X-Forwarded-For is honored.
+
+services:
+  afripass:
+    build: .
+    image: afripass-mvp:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+    volumes:
+      - afripass_data:/app/data
+      - afripass_uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/api/health', r => process.exit(r.statusCode===200?0:1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  afripass_data:
+  afripass_uploads:
