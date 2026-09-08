@@ -1,0 +1,256 @@
+/* Mobile app shell — layered on top of css/style.css's variables/cards/
+   buttons/badges. This file only adds the app-like chrome: a fixed top
+   bar, a fixed bottom tab bar, safe-area padding, and touch sizing. */
+
+html, body {
+  height: 100%;
+  overscroll-behavior-y: contain;
+}
+
+body.app-shell {
+  margin: 0;
+  background: var(--bg);
+  /* iOS PWA: keep content out of the notch/home-indicator area */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 14px;
+  background: var(--navy);
+  color: #fff;
+  border-bottom: 3px solid var(--gold);
+}
+.app-topbar .title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-topbar button.back {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 6px 8px;
+  margin: -6px -8px 0 0;
+  cursor: pointer;
+}
+.app-topbar .top-action {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 8px 4px;
+  cursor: pointer;
+}
+
+.app-content {
+  min-height: calc(100vh - 56px - 62px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  padding: 16px 14px 24px;
+  max-width: 640px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.app-tabbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 20;
+  display: flex;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.app-tabbar button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  padding: 8px 4px 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.app-tabbar button .icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+.app-tabbar button.active { color: var(--navy); }
+.app-tabbar button.active .icon { color: var(--gold); }
+
+/* Push page content clear of the fixed tab bar */
+.app-content { padding-bottom: calc(24px + 62px + env(safe-area-inset-bottom)); }
+.app-content.no-tabbar { padding-bottom: 24px; }
+
+/* Larger, thumb-friendly controls throughout the app view */
+.app-content button, .app-content .btn, .app-content input, .app-content select, .app-content textarea {
+  font-size: 1rem;
+  min-height: 44px;
+}
+.app-content .btn-sm, .app-content button.btn-sm { min-height: 36px; }
+
+.app-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+.app-spinner {
+  width: 28px; height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: app-spin 0.8s linear infinite;
+}
+@keyframes app-spin { to { transform: rotate(360deg); } }
+
+.install-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.install-banner .msg { flex: 1; font-size: 0.88rem; }
+.install-banner button.dismiss {
+  background: none; border: none; color: var(--text-muted); font-size: 1.1rem; cursor: pointer; padding: 4px;
+}
+
+.offline-banner {
+  background: var(--amber);
+  color: #fff;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 10px;
+}
+
+.scan-target {
+  position: relative;
+  aspect-ratio: 1;
+  max-width: 320px;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+.scan-target video { width: 100%; height: 100%; object-fit: cover; }
+.scan-target .frame {
+  position: absolute; inset: 24px;
+  border: 3px solid var(--gold);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.segmented {
+  display: flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+.segmented button {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.84rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.segmented button.active { background: #fff; color: var(--navy); box-shadow: 0 1px 2px rgba(16,24,40,0.08); }
+
+.qr-passport {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 18px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+}
+.qr-passport img { width: 180px; height: 180px; }
+
+@media (min-width: 720px) {
+  .app-content { padding-left: 24px; padding-right: 24px; }
+}
+
+/* ---------------------------------------------------------------------
+   Compatibility / mobile-specific extras layered on top of style.css's
+   design system. style.css defines .muted only as `p.muted, span.muted`
+   and doesn't have a small-text or button-variant scale, a generic flex
+   row/stack, a trust-score display, a level tracker, or a stat grid — the
+   mobile shell needs all of these, so they're added here rather than
+   touching the shared stylesheet the desktop pages rely on.
+   ------------------------------------------------------------------- */
+
+.muted { color: var(--text-muted); }
+.small { font-size: 0.85rem; }
+.mono { font-family: "SF Mono", Menlo, Consolas, monospace; letter-spacing: 0.02em; }
+.hidden { display: none !important; }
+
+.row { display: flex; gap: 10px; align-items: center; }
+.stack { display: flex; flex-direction: column; gap: 14px; }
+
+.btn-primary { background: var(--navy); color: #fff; }
+.btn-primary:hover { background: var(--navy-light); }
+.btn-outline { background: #fff; color: var(--navy); border: 1px solid var(--navy); }
+.btn-outline:hover { background: #eef2f7; }
+.btn-gold { background: var(--gold); color: var(--navy); }
+.btn-gold:hover { filter: brightness(1.06); }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-danger:hover { background: #a5301f; }
+.btn-sm { padding: 6px 12px; font-size: 0.82rem; min-height: 36px; }
+
+.trust-score { font-size: 2.3rem; font-weight: 800; color: var(--navy); line-height: 1; }
+.trust-score small { font-size: 1rem; color: var(--text-muted); font-weight: 500; }
+
+.level-track { display: flex; gap: 4px; margin: 10px 0 4px; }
+.level-dot { flex: 1; height: 7px; border-radius: 4px; background: var(--border); }
+.level-dot.filled { background: var(--gold); }
+
+.checklist { list-style: none; margin: 0; padding: 0; }
+.checklist li { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem; }
+.checklist li:last-child { border-bottom: none; }
+
+.result-item {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  padding: 13px 14px; border: 1px solid var(--border); border-radius: 9px; margin-bottom: 10px;
+  background: #fff; cursor: pointer;
+}
+.result-item:hover, .result-item:active { border-color: var(--navy-light); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+.stat-box { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; text-align: center; }
+.stat-box .num { font-size: 1.35rem; font-weight: 800; color: var(--navy); }
+.stat-box .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; margin-top: 3px; }
+
+.app-content table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.app-content th, .app-content td { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--border); }
+.app-content th { color: var(--text-muted); font-weight: 600; width: 38%; }
+.app-content tr:last-child th, .app-content tr:last-child td { border-bottom: none; }

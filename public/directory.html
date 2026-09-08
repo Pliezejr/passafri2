@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search businesses — AfriPass</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topnav">
+  <div class="container">
+    <a class="brand" href="/"><span>AfriPass</span><span class="badge">BUSINESS PASSPORT</span></a>
+    <nav class="links" id="nav-links"></nav>
+  </div>
+</header>
+
+<main class="container">
+  <h1>Search businesses</h1>
+  <p class="muted">Only businesses that chose to be publicly discoverable appear here.</p>
+
+  <div class="search-bar">
+    <input type="text" id="q" placeholder="Business name...">
+    <input type="text" id="country" placeholder="Country">
+    <input type="text" id="industry" placeholder="Industry">
+    <button id="search-btn">Search</button>
+  </div>
+
+  <div id="results"></div>
+</main>
+
+<footer>AfriPass MVP demo</footer>
+
+<script src="/js/app.js"></script>
+<script>
+async function runSearch() {
+  const q = document.getElementById('q').value.trim();
+  const country = document.getElementById('country').value.trim();
+  const industry = document.getElementById('industry').value.trim();
+  const params = new URLSearchParams();
+  if (q) params.set('q', q);
+  if (country) params.set('country', country);
+  if (industry) params.set('industry', industry);
+
+  const results = document.getElementById('results');
+  results.innerHTML = '<p class="muted">Searching…</p>';
+  try {
+    const list = await Api.get('/api/search?' + params.toString());
+    if (list.length === 0) {
+      results.innerHTML = '';
+      results.appendChild(el('div', { class: 'empty-state' }, 'No businesses matched your search.'));
+      return;
+    }
+    results.innerHTML = '';
+    const card = el('div', { class: 'card' });
+    list.forEach((b) => {
+      card.appendChild(el('div', { class: 'list-row' }, [
+        el('div', {}, [
+          el('div', {}, [
+            el('strong', {}, b.name + ' '),
+            el('span', { class: `badge-status status-${b.status}` }, statusLabel(b.status)),
+          ]),
+          el('div', { class: 'muted', style: 'font-size:0.85rem; margin-top:2px;' },
+            `${b.city ? b.city + ', ' : ''}${b.country} · ${b.industry || 'Unspecified industry'}`),
+          el('div', { class: 'passport-id muted', style: 'font-size:0.82rem; margin-top:2px;' }, b.passportId),
+        ]),
+        el('div', { style: 'text-align:right;' }, [
+          el('div', { style: 'font-weight:800; font-size:1.1rem;' }, `${b.trustScore}/100`),
+          el('a', { class: 'btn small', href: '/verify/' + encodeURIComponent(b.passportId), style: 'margin-top:6px;' }, 'View passport'),
+        ]),
+      ]));
+    });
+    results.appendChild(card);
+  } catch (e) {
+    results.innerHTML = '';
+    results.appendChild(el('div', { class: 'alert alert-error' }, e.message));
+  }
+}
+
+document.getElementById('search-btn').addEventListener('click', runSearch);
+['q', 'country', 'industry'].forEach((id) => {
+  document.getElementById(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(); });
+});
+runSearch();
+</script>
+</body>
+</html>

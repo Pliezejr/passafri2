@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AfriPass — Business Passport</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topnav">
+  <div class="container">
+    <a class="brand" href="/"><span>AfriPass</span><span class="badge">BUSINESS PASSPORT</span></a>
+    <nav class="links" id="nav-links"></nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card" style="text-align:center; padding:48px 24px;">
+    <h1 style="font-size:2rem;">Verify the business. Trust the transaction.</h1>
+    <p class="muted" style="max-width:520px; margin:8px auto 24px;">
+      Every business gets a verified AfriPass ID. Customers, banks, suppliers and
+      investors can check it in seconds — without seeing private documents.
+    </p>
+    <form id="lookup-form" style="max-width:420px; margin:0 auto; display:flex; gap:8px;">
+      <input type="text" id="lookup-input" placeholder="Enter AfriPass ID, e.g. AFR-GH-7F92A31C" required>
+      <button type="submit">Verify</button>
+    </form>
+    <p class="muted" style="margin-top:14px; font-size:0.85rem;">
+      Don't have an ID? <a href="/directory.html">Search the directory</a> instead.
+    </p>
+  </section>
+
+  <section class="grid-3">
+    <div class="card">
+      <h3>For businesses</h3>
+      <p class="muted">Register once, get a verified digital passport, and share your trust score with anyone who asks.</p>
+      <a class="btn small" href="/register.html">Register your business</a>
+    </div>
+    <div class="card">
+      <h3>For customers &amp; partners</h3>
+      <p class="muted">Look up any AfriPass ID or scan a QR code to see verification status, trust score and references.</p>
+      <a class="btn small secondary" href="/directory.html">Search businesses</a>
+    </div>
+    <div class="card">
+      <h3>For banks &amp; enterprises</h3>
+      <p class="muted">Submit verification requests, or integrate our REST API for automated KYB checks at scale.</p>
+      <a class="btn small secondary" href="/login.html">Business login</a>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:20px; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;">
+    <div>
+      <h3 style="margin:0 0 4px;">📱 Get the AfriPass app</h3>
+      <p class="muted" style="margin:0;">Install it on your phone for one-tap verification, QR scanning and offline access — no app store needed.</p>
+    </div>
+    <a class="btn small" href="/app.html">Open the app</a>
+  </section>
+</main>
+
+<footer>AfriPass MVP demo &middot; Public data only is ever shown on verification pages.</footer>
+
+<script src="/js/app.js"></script>
+<script>
+document.getElementById('lookup-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const id = document.getElementById('lookup-input').value.trim();
+  if (id) window.location.href = '/verify/' + encodeURIComponent(id);
+});
+</script>
+</body>
+</html>
