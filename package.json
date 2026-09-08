@@ -1,0 +1,14 @@
+{
+  "name": "afripass-mvp",
+  "version": "0.1.0",
+  "description": "AfriPass Business Passport - MVP (zero external dependencies, Node built-ins only)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:env": "node --env-file=.env server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}
