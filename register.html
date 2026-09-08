@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register your business — AfriPass</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topnav">
+  <div class="container">
+    <a class="brand" href="/"><span>AfriPass</span><span class="badge">BUSINESS PASSPORT</span></a>
+    <nav class="links" id="nav-links"></nav>
+  </div>
+</header>
+
+<main class="container" style="max-width:640px;">
+  <h1>Register your business</h1>
+  <p class="muted">You'll get an AfriPass ID immediately. Verification happens after you submit documents.</p>
+
+  <div id="alert-box"></div>
+
+  <form id="register-form" class="card">
+    <div class="grid-2">
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+      </div>
+      <div class="field">
+        <label for="password">Password (min. 8 characters)</label>
+        <input type="password" id="password" minlength="8" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="businessName">Business name</label>
+      <input type="text" id="businessName" required>
+    </div>
+
+    <div class="grid-3">
+      <div class="field">
+        <label for="country">Country</label>
+        <input type="text" id="country" placeholder="Ghana" required>
+      </div>
+      <div class="field">
+        <label for="region">Region</label>
+        <input type="text" id="region">
+      </div>
+      <div class="field">
+        <label for="city">City</label>
+        <input type="text" id="city">
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label for="industry">Industry</label>
+        <input type="text" id="industry" placeholder="Construction, Trading, ...">
+      </div>
+      <div class="field">
+        <label for="businessType">Business type</label>
+        <select id="businessType">
+          <option value="">Select…</option>
+          <option>Sole Proprietorship</option>
+          <option>Partnership</option>
+          <option>Limited Company</option>
+          <option>NGO</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone">
+      </div>
+      <div class="field">
+        <label for="website">Website</label>
+        <input type="url" id="website" placeholder="https://...">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="address">Address</label>
+      <input type="text" id="address">
+    </div>
+
+    <div class="field">
+      <label for="description">Description</label>
+      <textarea id="description" placeholder="What does the business do?"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" id="submit-btn">Create AfriPass ID</button>
+    </div>
+  </form>
+
+  <p class="muted">Already registered? <a href="/login.html">Log in</a></p>
+</main>
+
+<footer>AfriPass MVP demo</footer>
+
+<script src="/js/app.js"></script>
+<script>
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const alertBox = document.getElementById('alert-box');
+  const btn = document.getElementById('submit-btn');
+  showAlert(alertBox, null);
+
+  const payload = {
+    email: document.getElementById('email').value.trim(),
+    password: document.getElementById('password').value,
+    businessName: document.getElementById('businessName').value.trim(),
+    country: document.getElementById('country').value.trim(),
+    region: document.getElementById('region').value.trim(),
+    city: document.getElementById('city').value.trim(),
+    industry: document.getElementById('industry').value.trim(),
+    businessType: document.getElementById('businessType').value,
+    phone: document.getElementById('phone').value.trim(),
+    website: document.getElementById('website').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    description: document.getElementById('description').value.trim(),
+  };
+
+  btn.disabled = true;
+  btn.textContent = 'Creating…';
+  try {
+    await Api.post('/api/register', payload);
+    window.location.href = '/dashboard.html';
+  } catch (err) {
+    showAlert(alertBox, err.message);
+    btn.disabled = false;
+    btn.textContent = 'Create AfriPass ID';
+  }
+});
+</script>
+</body>
+</html>
