@@ -1,0 +1,28 @@
+# One-click deploy to Render: https://render.com/docs/blueprint-spec
+# Push this repo to GitHub/GitLab, then in Render: New -> Blueprint,
+# point it at the repo, and it will read this file.
+#
+# Render's free/starter disks are single-mount, so STORAGE_DIR keeps both
+# the JSON "database" and uploaded documents under the one persistent disk.
+
+services:
+  - type: web
+    name: afripass
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1" # Render terminates TLS in front of your service
+      - key: STORAGE_DIR
+        value: /var/data
+      - key: ADMIN_EMAIL
+        sync: false # set this in the Render dashboard
+      - key: ADMIN_PASSWORD
+        sync: false # set this in the Render dashboard (or leave unset to auto-generate on first boot — check logs)
+    disk:
+      name: afripass-data
+      mountPath: /var/data
+      sizeGB: 1
