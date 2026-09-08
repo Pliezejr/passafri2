@@ -1,0 +1,36 @@
+# Install on a VPS (Ubuntu/Debian example):
+#   sudo cp deploy/afripass.service /etc/systemd/system/afripass.service
+#   sudo useradd --system --home /opt/afripass --shell /usr/sbin/nologin afripass   # if it doesn't exist yet
+#   sudo mkdir -p /opt/afripass && sudo cp -r . /opt/afripass && sudo chown -R afripass:afripass /opt/afripass
+#   sudo cp .env.example /opt/afripass/.env && sudo nano /opt/afripass/.env   # fill in real values
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now afripass
+#   sudo systemctl status afripass
+#   journalctl -u afripass -f          # tail logs (this is where the seeded
+#                                        admin password prints on first boot)
+#
+# Put nginx or Caddy in front of this on 80/443 for TLS — see README.
+
+[Unit]
+Description=AfriPass Business Passport MVP
+After=network.target
+
+[Service]
+Type=simple
+User=afripass
+Group=afripass
+WorkingDirectory=/opt/afripass
+EnvironmentFile=/opt/afripass/.env
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+
+# Basic sandboxing — the app only needs to read/write its own data and
+# uploads directories.
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/opt/afripass/data /opt/afripass/uploads
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,33 @@
+# Example reverse proxy for AfriPass. Get certificates with certbot
+# (Let's Encrypt) first: sudo certbot --nginx -d yourdomain.com
+#
+# Copy to /etc/nginx/sites-available/afripass.conf, symlink into
+# sites-enabled, then `sudo nginx -t && sudo systemctl reload nginx`.
+#
+# Remember to set TRUST_PROXY=1 in the app's .env when using this, so
+# session cookies get the Secure flag and rate limiting sees real client IPs.
+
+server {
+    listen 80;
+    server_name yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+
+    ssl_certificate     /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+
+    client_max_body_size 10m;   # documents are base64 JSON, ~33% larger than raw; app caps raw at 8MB
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
